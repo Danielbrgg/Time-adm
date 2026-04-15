@@ -60,7 +60,6 @@ label {
     color: #444;
 }
 
-/* Aplicar padding e bordas apenas a inputs de texto, números, textarea e select */
 input[type="text"],
 input[type="number"],
 textarea,
@@ -81,7 +80,6 @@ select:focus {
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.2);
 }
 
-/* Estilos específicos para o grupo de radio buttons */
 .radioGroup {
     display: flex;
     flex-direction: column;
@@ -95,7 +93,6 @@ select:focus {
     gap: 8px;
 }
 
-/* Sobrescrevendo o estilo padrão de label para os itens do radio */
 .radioGroup label {
     margin-bottom: 0;
     font-weight: 400;
@@ -107,7 +104,6 @@ select:focus {
     width: 16px;
     height: 16px;
     accent-color: #3498db;
-    /* Muda a cor padrão do radio se o navegador suportar */
 }
 
 textarea {
@@ -157,8 +153,15 @@ td {
     border-bottom: 1px solid #eee;
 }
 
-tr:hover {
-    background-color: #f9f9f9;
+.th-remover {
+    background-color: red;
+}
+
+.td-remover {
+    background-color: rgba(0, 0, 0, 0.2);
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 table input[type="number"] {
