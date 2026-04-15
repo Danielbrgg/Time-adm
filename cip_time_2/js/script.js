@@ -16,8 +16,43 @@ form.addEventListener("submit", e => {
     produto.calcularValorImposto()
     produto.calcularValorFinal()
 
-    form.reset()
+    saveProduto(produto)
 })
+
+function saveProduto(produto){
+    const productTableBody = document.getElementById("productTableBody")
+    const tr = document.createElement("tr")
+        const Produto = document.createElement("td")
+        const ValorUnitario = document.createElement("td")
+        const Unidade = document.createElement("td")
+        const quantidadeTd = document.createElement("td")
+        const quantidade = document.createElement("input")
+        const ValorTotal = document.createElement("td")
+        const ValorImposto = document.createElement("td")
+        const ValorFinal = document.createElement("td")
+        const Remover = document.createElement("td")
+
+       Produto.innerHTML= produto.produto
+       ValorUnitario.innerHTML = produto.valorUnitario
+       Unidade.innerHTML = produto.unidade
+       quantidade.value = produto.qtd
+       ValorTotal.innerHTML = produto.valorTotal
+       ValorImposto.innerHTML = produto.valorImposto
+       ValorFinal.innerHTML = produto.valorFinal
+
+    quantidade.type = "number"
+    quantidadeTd.appendChild(quantidade)
+    
+    tr.appendChild(Produto)
+    tr.appendChild(ValorUnitario)
+    tr.appendChild(Unidade)
+    tr.appendChild(quantidadeTd)
+    tr.appendChild(ValorTotal)
+    tr.appendChild(ValorImposto)
+    tr.appendChild(ValorFinal)
+
+    productTableBody.appendChild(tr)
+}
 
 class Produto {
     produto
@@ -65,3 +100,4 @@ class Produto {
         this.valorFinal = this.valorTotal + this.valorImposto
     }
 }
+
