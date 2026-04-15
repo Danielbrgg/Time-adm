@@ -17,6 +17,8 @@ form.addEventListener("submit", e => {
     produto.calcularValorFinal()
 
     saveProduto(produto)
+
+    form.reset()
 })
 
 function saveProduto(produto){
