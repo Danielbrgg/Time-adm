@@ -37,6 +37,12 @@ function saveProduto(produto){
        Unidade.innerHTML = produto.unidade
        quantidade.value = produto.qtd
        
+       Remover.innerHTML = "x"
+       Remover.classList.add("td-remover")
+
+       Remover.addEventListener("click", () =>{
+            productTableBody.removeChild(tr)
+       })
 
 
     quantidade.type = "number"
@@ -66,6 +72,7 @@ function saveProduto(produto){
     tr.appendChild(ValorTotal)
     tr.appendChild(ValorImposto)
     tr.appendChild(ValorFinal)
+    tr.appendChild(Remover)
 
     productTableBody.appendChild(tr)
 }
