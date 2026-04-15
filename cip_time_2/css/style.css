@@ -60,7 +60,9 @@ label {
     color: #444;
 }
 
-input,
+/* Aplicar padding e bordas apenas a inputs de texto, números, textarea e select */
+input[type="text"],
+input[type="number"],
 textarea,
 select {
     padding: 12px;
@@ -70,12 +72,42 @@ select {
     transition: border-color 0.3s ease;
 }
 
-input:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
 textarea:focus,
 select:focus {
     outline: none;
     border-color: #3498db;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.2);
+}
+
+/* Estilos específicos para o grupo de radio buttons */
+.radioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 5px 0;
+}
+
+.radioGroup div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Sobrescrevendo o estilo padrão de label para os itens do radio */
+.radioGroup label {
+    margin-bottom: 0;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.radioGroup input[type="radio"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: #3498db;
+    /* Muda a cor padrão do radio se o navegador suportar */
 }
 
 textarea {
