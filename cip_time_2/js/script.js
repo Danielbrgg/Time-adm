@@ -15,6 +15,8 @@ form.addEventListener("submit", e => {
     produto.calcularValorTotal()
     produto.calcularValorImposto()
     produto.calcularValorFinal()
+
+    form.reset()
 })
 
 class Produto {
