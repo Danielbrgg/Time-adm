@@ -11,6 +11,10 @@ form.addEventListener("submit", e => {
         unidade: formData.get("unidade"),
         tipoProduto: formData.get("tipo")
     })
+
+    produto.calcularValorTotal()
+    produto.calcularValorImposto()
+    produto.calcularValorFinal()
 })
 
 class Produto {
