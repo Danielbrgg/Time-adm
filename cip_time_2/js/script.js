@@ -124,9 +124,6 @@ class Produto {
     }
 }
 
-<<<<<<< HEAD
-=======
 function numberToReal(numero) {
     return numero.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
 }
->>>>>>> aed6864f5f5a409612bf5f97e99120cfe2d876b5
