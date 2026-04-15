@@ -36,22 +36,27 @@ function saveProduto(produto){
        ValorUnitario.innerHTML = produto.valorUnitario
        Unidade.innerHTML = produto.unidade
        quantidade.value = produto.qtd
-       ValorTotal.innerHTML =
-       ValorImposto.innerHTML = produto.valorImposto
-       ValorFinal.innerHTML = produto.valorFinal
+       
+
 
     quantidade.type = "number"
     quantidadeTd.appendChild(quantidade)
 
     produto.calcularValorTotal()
     ValorTotal.innerHTML = produto.valorTotal
+    ValorImposto.innerHTML = produto.valorImposto
+    ValorFinal.innerHTML = produto.valorFinal
 
     quantidade.addEventListener("input", () => {
         produto.qtd = Number(quantidade.value) || 0
 
         produto.calcularValorTotal()
-
+        produto.calcularValorImposto()
+        produto.calcularValorFinal()
+        
         ValorTotal.innerHTML = produto.valorTotal
+        ValorImposto.innerHTML = produto.valorImposto
+        ValorFinal.innerHTML = produto.valorFinal
     })
     
     tr.appendChild(Produto)
