@@ -54,4 +54,8 @@ class Produto {
                 break
         }
     }
+
+    calcularValorFinal() {
+        this.valorFinal = this.valorTotal + this.valorImposto
+    }
 }
