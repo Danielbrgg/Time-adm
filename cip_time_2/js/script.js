@@ -65,3 +65,7 @@ class Produto {
         this.valorFinal = this.valorTotal + this.valorImposto
     }
 }
+
+function numberToReal(numero) {
+    return numero.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+}
