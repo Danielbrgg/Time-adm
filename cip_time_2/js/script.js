@@ -1,5 +1,5 @@
-const productTableBody = document.getElementById("productTableBody")
 const form = document.querySelector("form")
+const productTableBody = document.getElementById("productTableBody")
 const productPlaceholder = document.querySelector(".produtoPalceholder")
 let produtos = []
 
