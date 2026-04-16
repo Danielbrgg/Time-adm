@@ -33,7 +33,12 @@
 
             <div class="formItem">
                 <label for="unidade">Unidade:</label>
-                <input type="text" id="unidade" name="unidade" required>
+                <select id="unidade" name="unidade" required>
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="und">Unidade (und)</option>
+                    <option value="kg">Quilograma (kg)</option>
+                    <option value="L">Litro (L)</option>
+                </select>
             </div>
 
             <div class="formItem">
