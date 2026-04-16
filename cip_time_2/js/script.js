@@ -1,4 +1,7 @@
 const form = document.querySelector("form")
+const productTableBody = document.getElementById("productTableBody")
+const productPlaceholder = document.querySelector(".produtoPalceholder")
+let produtos = []
 
 form.addEventListener("submit", e => {
     e.preventDefault()
@@ -7,7 +10,7 @@ form.addEventListener("submit", e => {
 
     const produto = new Produto({
         produto: formData.get("produto"),
-        valorUnitario: formData.get("valor"),
+        valorUnitario: Number(formData.get("valor")),
         unidade: formData.get("unidade"),
         tipoProduto: formData.get("tipo")
     })
@@ -16,44 +19,55 @@ form.addEventListener("submit", e => {
     produto.calcularValorImposto()
     produto.calcularValorFinal()
 
+    produtos.push(produto)
+
     saveProduto(produto)
 
     form.reset()
 })
 
-function saveProduto(produto){
-    const productTableBody = document.getElementById("productTableBody")
+function saveProduto(produto) {
+    if (productTableBody.contains(productPlaceholder)) {
+        productTableBody.removeChild(productPlaceholder)
+    }
+
     const tr = document.createElement("tr")
-        const Produto = document.createElement("td")
-        const ValorUnitario = document.createElement("td")
-        const Unidade = document.createElement("td")
-        const quantidadeTd = document.createElement("td")
-        const quantidade = document.createElement("input")
-        const ValorTotal = document.createElement("td")
-        const ValorImposto = document.createElement("td")
-        const ValorFinal = document.createElement("td")
-        const Remover = document.createElement("td")
+    const Produto = document.createElement("td")
+    const ValorUnitario = document.createElement("td")
+    const Unidade = document.createElement("td")
+    const quantidadeTd = document.createElement("td")
+    const quantidade = document.createElement("input")
+    const ValorTotal = document.createElement("td")
+    const ValorImposto = document.createElement("td")
+    const ValorFinal = document.createElement("td")
+    const Remover = document.createElement("td")
 
-       Produto.innerHTML= produto.produto
-       ValorUnitario.innerHTML = produto.valorUnitario
-       Unidade.innerHTML = produto.unidade
-       quantidade.value = produto.qtd
-       
-       Remover.innerHTML = "x"
-       Remover.classList.add("td-remover")
+    Produto.innerHTML = produto.produto
+    ValorUnitario.innerHTML = numberToReal(produto.valorUnitario)
+    Unidade.innerHTML = produto.unidade
+    quantidade.value = produto.qtd
 
-       Remover.addEventListener("click", () =>{
-            productTableBody.removeChild(tr)
-       })
+    Remover.innerHTML = "x"
+    Remover.classList.add("td-remover")
 
+    Remover.addEventListener("click", () => {
+        productTableBody.removeChild(tr)
+
+        const index = produtos.indexOf(produto)
+        if (index > -1) {
+            produtos.splice(index, 1)
+        }
+
+        if (produtos.length === 0) {
+            productTableBody.appendChild(productPlaceholder)
+        }
+    })
 
     quantidade.type = "number"
     quantidadeTd.appendChild(quantidade)
 
     produto.calcularValorTotal()
-    ValorTotal.innerHTML = produto.valorTotal
-    ValorImposto.innerHTML = produto.valorImposto
-    ValorFinal.innerHTML = produto.valorFinal
+    formatarValor()
 
     quantidade.addEventListener("input", () => {
         produto.qtd = Number(quantidade.value) || 0
@@ -61,12 +75,16 @@ function saveProduto(produto){
         produto.calcularValorTotal()
         produto.calcularValorImposto()
         produto.calcularValorFinal()
-        
-        ValorTotal.innerHTML = produto.valorTotal
-        ValorImposto.innerHTML = produto.valorImposto
-        ValorFinal.innerHTML = produto.valorFinal
+
+        formatarValor()
     })
-    
+
+    function formatarValor() {
+        ValorTotal.innerHTML = numberToReal(produto.valorTotal)
+        ValorImposto.innerHTML = numberToReal(produto.valorImposto)
+        ValorFinal.innerHTML = numberToReal(produto.valorFinal)
+    }
+
     tr.appendChild(Produto)
     tr.appendChild(ValorUnitario)
     tr.appendChild(Unidade)
