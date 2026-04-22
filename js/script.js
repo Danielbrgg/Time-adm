@@ -34,6 +34,7 @@ form.addEventListener("submit", async (e) => {
   });
 
   const data = await response.json();
+  produto.id = data.id
 
   produto.calcularValorTotal();
   produto.calcularValorImposto();
@@ -69,7 +70,12 @@ function saveProduto(produto) {
   Remover.innerHTML = "x";
   Remover.classList.add("td-remover");
 
-  Remover.addEventListener("click", () => {
+  Remover.addEventListener("click", async () => {
+
+    const response = await fetch(apiUrl+`/${produto.id}`, {
+        method: "DELETE"
+    })
+
     productTableBody.removeChild(tr);
 
     const index = produtos.indexOf(produto);
@@ -88,12 +94,23 @@ function saveProduto(produto) {
   produto.calcularValorTotal();
   formatarValor();
 
-  quantidade.addEventListener("input", () => {
-    produto.qtd = Number(quantidade.value) || 0;
+  quantidade.addEventListener("input", async () => {
+      
+      produto.qtd = Number(quantidade.value) || 0;
+      
+      produto.calcularValorTotal();
+      produto.calcularValorImposto();
+      produto.calcularValorFinal();
+      
+      const response = await fetch(apiUrl+`/${produto.id}`, {
+        method: "PATCH",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({qtd: produto.qtd})
+      })
 
-    produto.calcularValorTotal();
-    produto.calcularValorImposto();
-    produto.calcularValorFinal();
+      if(!response.ok){
+        console.error(response)
+      }
 
     formatarValor();
   });
@@ -117,6 +134,7 @@ function saveProduto(produto) {
 }
 
 class Produto {
+  id;
   produto;
   valorUnitario;
   unidade;
@@ -181,6 +199,7 @@ async function loadProdutos() {
         tipoProduto: e.tipo
     });
     produto.qtd = e.qtd;
+    produto.id = e.id;
     
     produto.calcularValorTotal();
     produto.calcularValorImposto();
