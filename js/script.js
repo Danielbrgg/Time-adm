@@ -191,7 +191,6 @@ async function loadProdutos() {
 
   data.forEach((e) => {
 
-    console.log(e)
     const produto = new Produto({
         produto: e.nome,
         valorUnitario: e.valorUnd,
@@ -204,7 +203,6 @@ async function loadProdutos() {
     produto.calcularValorTotal();
     produto.calcularValorImposto();
     produto.calcularValorFinal();
-    console.log(produto)
 
     saveProduto(produto);
   });
