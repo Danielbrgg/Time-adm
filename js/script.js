@@ -5,14 +5,10 @@ const apiUrl = "http://10.231.32.35:8081/produtos";
 let produtos = [];
 
 let formUpdate = false;
+let editingId = null;
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
-  if (formUpdate) {
-    preencherFormulario();
-    return
-  }
 
   const formData = new FormData(form);
 
@@ -33,6 +29,14 @@ form.addEventListener("submit", async (e) => {
     qtd: produto.qtd,
   };
 
+  //PUT
+  if (formUpdate && editingId != null) {
+    formUpdate = false;
+    await preencherFormulario(editingId, info);
+    return
+  }
+  
+  //POST
   const response = await fetch(apiUrl, {
     headers: {
       "Content-Type": "application/json",
@@ -41,17 +45,55 @@ form.addEventListener("submit", async (e) => {
     body: JSON.stringify(info),
   });
 
-  const data = await response.json();
-  produto.id = data.id
+  try {
+    const data = await response.json();
+    produto.id = data.id
 
-  produto.calcularValorTotal();
-  produto.calcularValorImposto();
-  produto.calcularValorFinal();
+    produto.calcularValorTotal();
+    produto.calcularValorImposto();
+    produto.calcularValorFinal();
 
-  saveProduto(produto);
+    saveProduto(produto);
+  } catch (error) {
+    alert("Erro ao adicionar produto. Por favor, tente novamente.");
+    console.error(error);
+  }
 
   form.reset();
 });
+
+async function preencherFormulario(id, info) {
+  const response = await fetch(apiUrl + `/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(info)
+  });
+
+  if (response.ok) {
+    const updatedProduto = new Produto({
+      produto: info.nome,
+      caracteristicas: info.caracteristicas,
+      valorUnitario: info.valorUnd,
+      unidade: info.und,
+      tipoProduto: info.tipo
+    })
+    const tr = document.getElementById(id);
+    tr.children[0].innerHTML = updatedProduto.produto;
+    tr.children[1].innerHTML = numberToReal(updatedProduto.valorUnitario);
+    tr.children[2].innerHTML = updatedProduto.unidade;
+    tr.children[3].children[0].value = updatedProduto.qtd;
+
+    updatedProduto.calcularValorTotal();
+    updatedProduto.calcularValorImposto();
+    updatedProduto.calcularValorFinal();
+
+    tr.children[4].innerHTML = numberToReal(updatedProduto.valorTotal);
+    tr.children[5].innerHTML = numberToReal(updatedProduto.valorImposto);
+    tr.children[6].innerHTML = numberToReal(updatedProduto.valorFinal);
+  } else {
+    alert("Erro ao atualizar produto. Por favor, tente novamente.");
+  }
+}
 
 function saveProduto(produto) {
   if (productTableBody.contains(productPlaceholder)) {
@@ -60,6 +102,7 @@ function saveProduto(produto) {
   produtos.push(produto);
 
   const tr = document.createElement("tr");
+  tr.id = produto.id;
   const nome = document.createElement("td");
   const ValorUnitario = document.createElement("td");
   const Unidade = document.createElement("td");
@@ -82,52 +125,13 @@ function saveProduto(produto) {
   Alterar.addEventListener("click", async () => {
     formUpdate = true;
 
-    //alguem pega os dados desse produto e joga no formulario
-    function preencherFormulario() {
-
-    }
-
-    //outro alguem le os inputs do formulario para poder dar sequencia na funcao a seguir
-
-    const produtoAtualizado = new Produto(); //produto exemplo pq esse deve vir do formulario
-
-    const info = {
-      nome: produtoAtualizado.produto,
-      caracteristicas: produtoAtualizado.caracteristicas,
-      valorUnd: produtoAtualizado.valorUnitario,
-      und: produtoAtualizado.unidade,
-      tipo: produtoAtualizado.tipoProduto,
-      qtd: produtoAtualizado.qtd,
-    };
-
-    const response = await fetch(apiUrl + `/${produto.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(info)
-    })
-
-    if (!response.ok) {
-      console.error(response)
-      alert("Erro ao atualizar produto")
-      return;
-    }
-
-
-    nome.innerHTML = produtoAtualizado.produto;
-    ValorUnitario.innerHTML = numberToReal(produtoAtualizado.valorUnitario);
-    Unidade.innerHTML = produtoAtualizado.unidade;
-    quantidade.value = produtoAtualizado.qtd;
-
-    produtoAtualizado.calcularValorTotal();
-    produtoAtualizado.calcularValorImposto();
-    produtoAtualizado.calcularValorFinal();
-
-    ValorTotal.innerHTML = numberToReal(produtoAtualizado.valorTotal);
-    ValorImposto.innerHTML = numberToReal(produtoAtualizado.valorImposto);
-    ValorFinal.innerHTML = numberToReal(produtoAtualizado.valorFinal);
-
-    formUpdate = false;
-  })
+    form.elements["produto"].value = produto.produto;
+    form.elements["carac"].value = produto.caracteristicas;
+    form.elements["valor"].value = produto.valorUnitario;
+    form.elements["unidade"].value = produto.unidade;
+    form.elements["tipo"].value = produto.tipoProduto;
+    editingId = produto.id;
+  });
 
   Remover.innerHTML = "x";
   Remover.classList.add("td-remover");
@@ -258,6 +262,7 @@ async function loadProdutos() {
 
     const produto = new Produto({
       produto: e.nome,
+      caracteristicas: e.caracteristicas,
       valorUnitario: e.valorUnd,
       unidade: e.und,
       tipoProduto: e.tipo
