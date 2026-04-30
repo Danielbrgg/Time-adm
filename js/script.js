@@ -80,6 +80,8 @@ function saveProduto(produto) {
   Alterar.classList.add("td-alterar")
 
   Alterar.addEventListener("click", async () => {
+    formUpdate = true;
+
     //alguem pega os dados desse produto e joga no formulario
     function preencherFormulario() {
 
@@ -123,6 +125,8 @@ function saveProduto(produto) {
     ValorTotal.innerHTML = numberToReal(produtoAtualizado.valorTotal);
     ValorImposto.innerHTML = numberToReal(produtoAtualizado.valorImposto);
     ValorFinal.innerHTML = numberToReal(produtoAtualizado.valorFinal);
+
+    formUpdate = false;
   })
 
   Remover.innerHTML = "x";
