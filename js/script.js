@@ -4,8 +4,15 @@ const productPlaceholder = document.querySelector(".produtoPalceholder");
 const apiUrl = "http://10.231.32.35:8081/produtos";
 let produtos = [];
 
+let formUpdate = false;
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  if (formUpdate) {
+    preencherFormulario();
+    return
+  }
 
   const formData = new FormData(form);
 
@@ -74,6 +81,9 @@ function saveProduto(produto) {
 
   Alterar.addEventListener("click", async () => {
     //alguem pega os dados desse produto e joga no formulario
+    function preencherFormulario() {
+
+    }
 
     //outro alguem le os inputs do formulario para poder dar sequencia na funcao a seguir
 
