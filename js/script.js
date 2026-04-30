@@ -60,12 +60,16 @@ function saveProduto(produto) {
   const ValorTotal = document.createElement("td");
   const ValorImposto = document.createElement("td");
   const ValorFinal = document.createElement("td");
+  const Alterar = document.createElement("td")
   const Remover = document.createElement("td");
 
   Produto.innerHTML = produto.produto;
   ValorUnitario.innerHTML = numberToReal(produto.valorUnitario);
   Unidade.innerHTML = produto.unidade;
   quantidade.value = produto.qtd;
+
+  Alterar.innerHTML = "Altera"
+  Alterar.classList.add("td-alterar")
 
   Remover.innerHTML = "x";
   Remover.classList.add("td-remover");
@@ -128,6 +132,7 @@ function saveProduto(produto) {
   tr.appendChild(ValorTotal);
   tr.appendChild(ValorImposto);
   tr.appendChild(ValorFinal);
+  tr.appendChild(Alterar);
   tr.appendChild(Remover);
 
   productTableBody.appendChild(tr);
