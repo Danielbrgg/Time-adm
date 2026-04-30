@@ -11,6 +11,7 @@ form.addEventListener("submit", async (e) => {
 
   const produto = new Produto({
     produto: formData.get("produto"),
+    caracteristicas: formData.get("carac"),
     valorUnitario: Number(formData.get("valor")),
     unidade: formData.get("unidade"),
     tipoProduto: formData.get("tipo"),
@@ -18,7 +19,7 @@ form.addEventListener("submit", async (e) => {
 
   const info = {
     nome: produto.produto,
-    caracteristicas: formData.get("carac"),
+    caracteristicas: produto.caracteristicas,
     valorUnd: produto.valorUnitario,
     und: produto.unidade,
     tipo: produto.tipoProduto,
@@ -52,7 +53,7 @@ function saveProduto(produto) {
   produtos.push(produto);
 
   const tr = document.createElement("tr");
-  const Produto = document.createElement("td");
+  const nome = document.createElement("td");
   const ValorUnitario = document.createElement("td");
   const Unidade = document.createElement("td");
   const quantidadeTd = document.createElement("td");
@@ -63,21 +64,64 @@ function saveProduto(produto) {
   const Alterar = document.createElement("td")
   const Remover = document.createElement("td");
 
-  Produto.innerHTML = produto.produto;
+  nome.innerHTML = produto.produto;
   ValorUnitario.innerHTML = numberToReal(produto.valorUnitario);
   Unidade.innerHTML = produto.unidade;
   quantidade.value = produto.qtd;
 
-  Alterar.innerHTML = "Altera"
+  Alterar.innerHTML = "Alterar"
   Alterar.classList.add("td-alterar")
+
+  Alterar.addEventListener("click", async () => {
+    //alguem pega os dados desse produto e joga no formulario
+
+    //outro alguem le os inputs do formulario para poder dar sequencia na funcao a seguir
+
+    const produtoAtualizado = new Produto(); //produto exemplo pq esse deve vir do formulario
+
+    const info = {
+      nome: produtoAtualizado.produto,
+      caracteristicas: produtoAtualizado.caracteristicas,
+      valorUnd: produtoAtualizado.valorUnitario,
+      und: produtoAtualizado.unidade,
+      tipo: produtoAtualizado.tipoProduto,
+      qtd: produtoAtualizado.qtd,
+    };
+
+    const response = await fetch(apiUrl + `/${produto.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(info)
+    })
+
+    if (!response.ok) {
+      console.error(response)
+      alert("Erro ao atualizar produto")
+      return;
+    }
+
+
+    nome.innerHTML = produtoAtualizado.produto;
+    ValorUnitario.innerHTML = numberToReal(produtoAtualizado.valorUnitario);
+    Unidade.innerHTML = produtoAtualizado.unidade;
+    quantidade.value = produtoAtualizado.qtd;
+
+    produtoAtualizado.calcularValorTotal();
+    produtoAtualizado.calcularValorImposto();
+    produtoAtualizado.calcularValorFinal();
+
+    ValorTotal.innerHTML = numberToReal(produtoAtualizado.valorTotal);
+    ValorImposto.innerHTML = numberToReal(produtoAtualizado.valorImposto);
+    ValorFinal.innerHTML = numberToReal(produtoAtualizado.valorFinal);
+  })
 
   Remover.innerHTML = "x";
   Remover.classList.add("td-remover");
 
   Remover.addEventListener("click", async () => {
 
-    const response = await fetch(apiUrl+`/${produto.id}`, {
-        method: "DELETE"
+    const response = await fetch(apiUrl + `/${produto.id}`, {
+      method: "DELETE"
     })
 
     productTableBody.removeChild(tr);
@@ -99,22 +143,22 @@ function saveProduto(produto) {
   formatarValor();
 
   quantidade.addEventListener("input", async () => {
-      
-      produto.qtd = Number(quantidade.value) || 0;
-      
-      produto.calcularValorTotal();
-      produto.calcularValorImposto();
-      produto.calcularValorFinal();
-      
-      const response = await fetch(apiUrl+`/${produto.id}`, {
-        method: "PATCH",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({qtd: produto.qtd})
-      })
 
-      if(!response.ok){
-        console.error(response)
-      }
+    produto.qtd = Number(quantidade.value) || 0;
+
+    produto.calcularValorTotal();
+    produto.calcularValorImposto();
+    produto.calcularValorFinal();
+
+    const response = await fetch(apiUrl + `/${produto.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ qtd: produto.qtd })
+    })
+
+    if (!response.ok) {
+      console.error(response)
+    }
 
     formatarValor();
   });
@@ -125,7 +169,7 @@ function saveProduto(produto) {
     ValorFinal.innerHTML = numberToReal(produto.valorFinal);
   }
 
-  tr.appendChild(Produto);
+  tr.appendChild(nome);
   tr.appendChild(ValorUnitario);
   tr.appendChild(Unidade);
   tr.appendChild(quantidadeTd);
@@ -141,6 +185,7 @@ function saveProduto(produto) {
 class Produto {
   id;
   produto;
+  caracteristicas;
   valorUnitario;
   unidade;
   tipoProduto;
@@ -149,8 +194,9 @@ class Produto {
   valorImposto;
   valorFinal;
 
-  constructor({ produto, valorUnitario, unidade, tipoProduto }) {
+  constructor({ produto, caracteristicas, valorUnitario, unidade, tipoProduto }) {
     this.produto = produto;
+    this.caracteristicas = caracteristicas;
     this.valorUnitario = valorUnitario;
     this.unidade = unidade;
     this.tipoProduto = tipoProduto;
@@ -197,14 +243,14 @@ async function loadProdutos() {
   data.forEach((e) => {
 
     const produto = new Produto({
-        produto: e.nome,
-        valorUnitario: e.valorUnd,
-        unidade: e.und,
-        tipoProduto: e.tipo
+      produto: e.nome,
+      valorUnitario: e.valorUnd,
+      unidade: e.und,
+      tipoProduto: e.tipo
     });
     produto.qtd = e.qtd;
     produto.id = e.id;
-    
+
     produto.calcularValorTotal();
     produto.calcularValorImposto();
     produto.calcularValorFinal();
