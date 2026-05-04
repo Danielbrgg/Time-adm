@@ -149,7 +149,12 @@ function saveProduto(produto) {
   Remover.innerHTML = "x";
   Remover.classList.add("td-remover");
 
-  Remover.addEventListener("click", async () => {
+  Remover.addEventListener("click", async (e) => {
+
+    if(!confirm("Tem certeza que deseja remover este produto?")) {
+      return;
+    }
+
     await fetch(apiUrl + `/${produto.id}`, {
       method: "DELETE"
     });
