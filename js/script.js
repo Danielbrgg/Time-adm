@@ -1,6 +1,7 @@
 const productTableBody = document.getElementById("productTableBody");
 const form = document.querySelector("form");
 const productPlaceholder = document.querySelector(".produtoPalceholder");
+const formItem = document.querySelector(".formItem");
 const button = document.querySelector("button");
 const apiUrl = "http://10.231.32.35:8081/produtos";
 let produtos = [];
@@ -126,25 +127,43 @@ function saveProduto(produto) {
   Alterar.innerHTML = "Alterar";
   Alterar.classList.add("td-alterar");
 
-  Alterar.addEventListener("click", () => {
-    if (formUpdate) {
+ let controller; 
+
+Alterar.addEventListener("click", () => {
+  if (controller) controller.abort();
+
+  if (formUpdate) {
+    formUpdate = false;
+    button.innerHTML = "Enviar";
+    editingId = null;
+    form.reset();
+    return;
+  }
+
+  formUpdate = true;
+  button.innerHTML = "Atualizar";
+
+  controller = new AbortController();
+
+  button.addEventListener("click", () => {
+    if (!confirm("Tem certeza que deseja alterar este produto?")) {
       formUpdate = false;
       button.innerHTML = "Enviar";
       editingId = null;
       form.reset();
+      controller.abort();
       return;
     }
+    
+  }, { signal: controller.signal });
 
-    formUpdate = true;
-    button.innerHTML = "Atualizar";
-
-    form.elements["produto"].value = produto.produto;
-    form.elements["carac"].value = produto.caracteristicas;
-    form.elements["valor"].value = produto.valorUnitario;
-    form.elements["unidade"].value = produto.unidade;
-    form.elements["tipo"].value = produto.tipoProduto;
-    editingId = produto.id;
-  });
+  form.elements["produto"].value = produto.produto;
+  form.elements["carac"].value = produto.caracteristicas;
+  form.elements["valor"].value = produto.valorUnitario;
+  form.elements["unidade"].value = produto.unidade;
+  form.elements["tipo"].value = produto.tipoProduto;
+  editingId = produto.id;
+});
 
   Remover.innerHTML = "x";
   Remover.classList.add("td-remover");
@@ -160,6 +179,7 @@ function saveProduto(produto) {
     });
 
     productTableBody.removeChild(tr);
+    form.reset();
 
     const index = produtos.indexOf(produto);
     if (index > -1) {
